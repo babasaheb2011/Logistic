@@ -1,0 +1,504 @@
+======================================
+DBMS:CReate_DB_Table
+======================================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        window.onload = function(){
+            var btnSsave = document.getElementById('btnSsave');
+            btnSsave.addEventListener('click',function(){
+                var obj = {
+                    id: parseInt(document.getElementById('txtid').value),
+                    name:document.getElementById('txtname').value
+                };
+                sessionStorage.setItem('Rec-000'+obj.id, JSON.stringify(obj));
+            },false);
+            var btnSclearips  = document.getElementById('btnSclearips');
+            btnSclearips.addEventListener('click', function(){
+                var inputs = document.getElementsByClassName('c1');
+                for(var i=0;i<inputs.length;i++){
+                    inputs[i].value = "";
+                }
+            },false);
+            var btnSgetdata  = document.getElementById('btnSgetdata');
+            btnSgetdata.addEventListener('click',function(){
+                var rec = prompt('Enter the Record');
+               // alert(sessionStorage.getItem(rec));
+                document.getElementById('dvSdata').innerHTML = sessionStorage.getItem(rec);
+            },false);
+            var btnSclearstorage  = document.getElementById('btnSclearstorage');
+            btnSclearstorage.addEventListener('click', function(){
+                sessionStorage.clear();
+            },false);
+
+            // Logic for LocalStorage
+            var btnLsave = document.getElementById('btnLsave');
+            btnLsave.addEventListener('click',function(){
+                var obj = {
+                    id: parseInt(document.getElementById('txtlid').value),
+                    name:document.getElementById('txtlname').value
+                };
+                localStorage.setItem('Rec-000'+obj.id, JSON.stringify(obj));
+            },false);
+            var btnLclearips  = document.getElementById('btnLclearips');
+            btnLclearips.addEventListener('click', function(){
+                var inputs = document.getElementsByClassName('c1');
+                for(var i=0;i<inputs.length;i++){
+                    inputs[i].value = "";
+                }
+            },false);
+            var btnLgetdata  = document.getElementById('btnLgetdata');
+            btnSgetdata.addEventListener('click',function(){
+                var rec = prompt('Enter the Record');
+               // alert(sessionStorage.getItem(rec));
+                document.getElementById('dvSdata').innerHTML = localStorage.getItem(rec);
+            },false);
+            var btnLclearstorage  = document.getElementById('btnLclearstorage');
+            btnSclearstorage.addEventListener('click', function(){
+                localStorage.clear();
+            },false);
+
+        }
+    </script>
+</head>
+<body>
+    <h1>Demo Session and  Local Storage</h1>
+    <h2>Using Sesion Storage</h2>
+    <div>
+        <div>
+            Id: <input type="text" id="txtid" class="c1">
+        </div>
+        <div>
+            Name: <input type="text" id="txtname" class="c1">
+        </div>
+        <div>
+             <input type="button" value="Save" id="btnSsave">
+             <input type="button" value="Clear Inputs" id="btnSclearips">
+             <input type="button" value="Get Data" id="btnSgetdata">
+             <input type="button" value="Clear Stotage" id="btnSclearstorage">
+        </div>
+        <hr>
+        <div id="dvSdata"></div>
+    </div>
+    <hr>
+    <hr>
+    <h2>Using Local Storage</h2>
+    <div>
+        <div>
+            Id: <input type="text" id="txtlid" class="c1">
+        </div>
+        <div>
+            Name: <input type="text" id="txtlname" class="c1">
+        </div>
+        <div>
+             <input type="button" value="Save" id="btnLsave">
+             <input type="button" value="Clear Inputs" id="btnLclearips">
+             <input type="button" value="Get Data" id="btnLgetdata">
+             <input type="button" value="Clear Stotage" id="btnLclearstorage">
+        </div>
+        <hr>
+        <div id="dvSdata"></div>
+    </div>
+</body>
+</html>
+===============================
+Select_Queries
+==============================
+USe Business;
+-- list of Employees for a specific Department
+select * from Employee where DeptNo=10;
+-- Analyze the QUery
+-- Since the DeptNO is already mentioned in QUery, then why to choose the DeptNo column
+-- Avoid using * in the query 
+select EmpNo, EmpName, Salary from Employee where DeptNo=10;
+-- Generating a Computed Column using Select Query 
+select EMpNo, EmpName, Salary, Salary*0.8 as Tax from Employee;
+
+-- REad the Max salary from the EMployees table
+select Max(Salary) from EMployee;
+-- Count of Employees
+select Count(*) from EMployee;
+-- Count of Employees for a specific Department
+select DeptNo, Count(*) from EMployee where DeptNo=10;
+-- Count of Employees Per Department
+select DeptNo, Count(*) from EMployee group by DeptNo;
+-- MAx Salary Per DeptNo
+select DeptNo, max(Salary) as MAX_SALARY from Employee Group by DeptNo;
+-- Calculatind Second Max Salary
+select max(Salary) from Employee
+ where Salary <(Select Max(Salary) from Employee);
+-- Second Max Salary per Depatment
+select DeptNo, max(Salary) from Employee
+ where Salary <(Select Max(Salary) from Employee)  group by DeptNo;
+ -- Sum of Salary per department
+select DeptNo, sum(Salary) from Employee group by DeptNo; 
+   
+select DeptNo, avg (Salary) from Employee group by DeptNo;  
+
+-- Printing all EMployees by Salary
+select EmpName, Salary, DeptNo from Employee Order by Salary;
+
+-- Use Multiple Tables in a select query to Read data
+-- Always note that, using multiple tables in Select Query must be done when they have atlease one common COlumn 
+
+select * from Department, EMployee;  -- will provide 100 rows 
+
+-- will provide 20 rows, the Department's DeptNo will be read for each matching record from the EMployee Table
+select * from Department, EMployee
+ where Department.DEptNo = Employee.DeptNo;    -- Skip DEptNo=50 because there are no Employee records for it
+
+select EmpNo, EmpName, DeptName,Designation,Salary, Location
+From Department, Employee
+Where Department.DeptNo = Employee.DeptNo;
+
+-- When there are Select queries those are involving using multiple tables with conditions then consider 
+-- using Joins 
+-- Simple Join aka Inner Join, the data is read only having match
+ 
+select EmpNo, EmpName, DeptName,Designation,Salary, Location
+From Department Inner Join Employee
+Where Department.DeptNo = Employee.DeptNo;
+
+-- Read all data from Departments that match and  does not match with Employees
+select EmpNo, Department.DeptNo, EmpName, DeptName,Designation,Salary, Location
+From Department Left Join Employee
+on Department.DeptNo = Employee.DeptNo;
+
+-- Right Join, Opposite of  Left Join
+select EmpNo, Department.DeptNo, EmpName, DeptName,Designation,Salary, Location
+From Department right Join Employee
+on Department.DeptNo = Employee.DeptNo;
+
+=========================================
+Stores procedure
+=========================================
+USe Business;
+-- STored Proc to return all Employees
+-- This will not accept any input parameter
+
+DELIMITER //
+Create Procedure getEmployees()
+BEGIN
+	select * from Employee;
+END //
+DELIMITER ;
+-- Execute the STored Proc
+Call getEmployees();
+
+-- STored Proc with Parameters
+-- Use 'IN' for input Parameter
+-- Use InOut for input and output parameter
+
+ DELIMITER //
+Create Procedure getEmployeesByDesignation(
+  IN desig varchar(200)
+)
+BEGIN
+	select * from Employee 
+    where Designation=desig;
+END //
+DELIMITER ;
+
+Call getEmployeesByDesignation('Manager');
+
+-- Create a Stored Proc for Insert
+DELIMITER //
+Create Procedure InsertEmployee(
+  IN eno int,
+  IN ename varchar(200),
+  IN desig varchar(200),
+  IN sal int,
+  IN dno int
+)
+BEGIN
+   -- While using Insert Stastement in Stored Proc, always provide
+   -- columns in which Insert will takes place
+   insert into Employee (EmpNo, EmpName,Designation,Salary,DeptNo) 
+   values 
+   (eno,ename,desig, sal, dno);
+END // 
+DELIMITER ;
+
+CALL InsertEmployee(201, 'Neeta', 'Manager', 12300, 10);	
+
+select * from Employee;
+
+-- Stored Proc with implict return using Scala function
+
+DELIMITER //
+Create Procedure getSumSalaryByDeptNo(
+IN dno int
+)
+BEGIN
+		select sum(salary) from Employee where DeptNo=dno;
+END //
+DELIMITER ;
+
+-- implicit returhned result
+CALL getSumSalaryByDeptNo(20);
+
+-- Define an explicit return parameter
+
+DELIMITER //
+Create Procedure getSumSalaryByDeptNoOutPatameter(
+IN dno int,
+INOUT sumsal int -- input and output parameter
+)
+BEGIN
+		select sum(salary) into sumsal from Employee where DeptNo=dno;
+END //
+DELIMITER ;
+
+-- Call STored Proc and pass the SQL Parameter as input Parameter
+-- SQL Parameter is prefixed with the @ sign
+Call getSumSalaryByDeptNoOutPatameter(20, @SumSalary); 
+Select @SumSalary;
+
+-- Can we have  Logical Conditions with Stored Procs
+
+DELIMITER $$
+Create Procedure  getCountOfEmployeesByDeptNo(
+ IN pDeptNo int,
+ OUT pCount int
+)
+Begin
+	IF pDeptNo > 0 THEN
+		Select Count(*) as pCount from Employee
+        where
+        DeptNo = pDeptNo;
+    ELSE
+		set pCount =0;
+    END IF;    
+End $$
+DELIMITER ;
+
+CALL getCountOfEmployeesByDeptNo(10, @pCount);
+
+
+-- CReating Views
+-- a view that will show only EmpName, Designation and Salary
+
+Create View EmpDesigSal
+As
+Select EmpName, Designation,Salary 
+From Employee;
+
+select * from empdesigsal;
+
+Insert into Employee Values (202, 'Sameer', 'Manager', 230000, 20);
+
+Create View DeptEmp AS
+Select EmpNo, EmpName, Designation, DeptName, Location
+From Department, Employee
+Where Department.DeptNo = Employee.DeptNo;
+
+
+
+Select * from Department; 
+insert into Employee Values (203, 'Shreyas', 'Manager', 340000, 50);
+ 
+Select * from DeptEmp;
+=============================================
+Readme
+=============================================
+# RDBMS using MySQL
+1. Data Pertsistance Layer for Data Driven Line-of-Business (LOB) App
+    - Creation of Table
+        - Define Columns
+            - Data Types
+                - Numeric
+                    - Int, smallint, tynyint, mediumint, bigint
+                - String Datatypes
+                    - char for Foxlength
+                    - varchar for vaiable length
+                    - Binary and Varbinary
+                    - Text (No Case sensitive) and Blob (Case sensitive)
+                    - ENum
+                - Date Time
+                    - Date, Time, DateTime,year
+                - JSON 
+                    - json
+                - Spatial  
+            - Constraints
+                - Primary Key
+                - Identity Key
+                - Foreign Key
+                - COmposite Key
+                - Not Null
+                - Auto Increament (Identity)
+            - Relations
+                - One-to-one
+                - One-to-Many
+                - Many-To-Many
+            - Normalization
+                -  Process of Reorganizing the data and its schema in following format
+                    - No Repeatation of columns
+                    - No Redudancy by avoiding the data repeatation  
+                    - Only those column in a table which can be used to set relaionships in a single row value
+
+DispacthName, VendorName, CustomerName, TruckNo, DriverName, OrderDate, DispatchDate, OrderQuantity, DispatchQuantity, DeliveryDestination, DelivaryName, DeliveryQuantity, Advance, DieselCost, TollTax, MaintenenceCost, VendorAddress, DriverAddress, CustomerAddress, DeliveryAddress, DispatchDate, ExpectedDeliveryDate,ActualDeliveryDate, Rate, TotalPaymentReceived, StartKm, EndKm, TotalKm, DriverSalary, NumberOfDrivers, CLeanerSalary, NumberOfCleaners, DispatchDuration, VendorContactNumber, DriverContactNumber, CustomerContactNumber, DeliverContactNumber, OrderNo, Salutations, DeliveryStatus
+
+First Normal Form
+    - Each Record Must be Unique, 
+    - Each table cell must contain single value
+    - Segrigate the infortmation ins seperate columns by creating separate tables
+Second Normal Form
+    - Complete FIrst Normal Form
+    - Create a Primary Key, make sure that its is not functionaly dependnat on any other column, instead, it will be used to identity the row uniquely
+        - Preferable, Primary Key must be Positive Integer, ans if string
+            - EMail, MobileNumber, UserName
+                - Make sure that use regular expression to validate or transform values entered by enduser in required format
+
+VendorMaster
+    - VendorId (Primary Key), VendorName, Address, City, State, PrimaryContactNo, MobileNo, SecondaryContactNo, VendorPanNumber, VendorGSTNumber, PinCode.
+TruckMaster
+    - TruckNo (Primary Key) [State]-[DistrictNo]-[Series]-[TruckNo]
+        - MH12BV9078, MH-12-BV-9076, mh12bv9078, mh-12-bv-9078
+        - AP1T0987, AP01T987           
+    - TuckId, TruckNo, EngineNo, ChesisNo, VendorId (ForeignKey)
+DriverMaster (Hired/Permanat)
+    - DriverId, Name, COntactNo, MobileNo, Address, City, State, PinCode, EmergencyContactNum, VendorId(In Case of Permanant)
+    - If Hired then create a seperate COlumn as EMployeementStatus         
+
+3rd Normal Form
+    - There must be 2nd normal exist
+    - Eliminate transitive functional dependencies
+
+e.g. Salutation is needed for Vemdor, Driver, Customer, ect
+    - Mr.,Ms.,Mrs., Dr.
+        - Table for Salutation
+            - SalutatiuonId, SalutationName
+    - DeliveryStatus
+        - DelivaryStatusId, DerliuveryStatus
+            - 1: Success
+            - 2: Delayed
+            - 3: Cancelled
+            - 4: Rejected
+            - 5: Pending        
+
+
+# Using MySQL Practically
+ Database Manipulation Statements
+    - Data Definition Language (DDL), CReate [DATABASE,TABLE], Drop, Alter
+    - Data Manipulation Language (DML), Insert, Update, Delete
+    - Queries
+        - Select
+            - Wehere
+            - Order by, Order by Desc
+            - Group by
+            - join
+                - Simple Join
+                - Left
+                - Right
+
+
+- Database Creation
+    - Create Database [NAME];
+- Set the Context of the database so that the tabe will be created  .   
+    - Use [DATABASE-NAME]    ;
+- Table Creation
+    - Create Table [TABLE-NAME](COlumnName DataType Constratints,.......);
+- Table Oprations
+    - Adding Colum
+        - Alter Table [TABLE-NAME] Add Column [ColumnName] Datatype COnstratints;
+    - Renaming the columns
+        - Alter Table [TABLE-NAME] change [OLD-COLUMN-NAME] [NET-COLUMN-NAME] datatype;
+    - Drop COlumn
+        - ALter Table [TABLE_NAME] DROP COLUMN [COLUMN-NAME]
+    - DROP Table
+        - DROP Table [TABLE-NAME]
+    - Remove All Records from Table
+        - Truncate Table [TABLE-NAME]
+
+- Working with Select
+
+
+- Powerful mechanism of Data Read
+    - Using Select Queries
+        - COnsider Following Clouses for Accessing the data
+            - Where Clause
+            - Orde By (Ascending / Descending)
+            - Group By
+            - IN for Range
+        - Consider Using Aggrigate Functions
+            - SUm() / Max() / Min() / Average() /  Count(), etc
+        - COnsider Using Joins
+            - Define Strategy of reading data from Multiple Tables 
+            - REad data on COndition between two tables, simple join
+            - Read all data from Left table and read only matching data  on condition from Right Table, Left Join
+            - REad all data from Right Join and read onlt matching data on condition from left table, right Join        
+    - COnsider Using Views
+        -They are the Logical Data Repositories created from original table to prevent all column values to be exposed to the client    
+            - They are used for creating reports from the original Table    
+    - Using Stored Procs
+        - THis is a code block that will be compiled and executed in the DB Processing engine
+        - THis always resides on the DB Server and can be invoked using 
+            - COmmands
+            - COmmands with Input Parameters
+            - Commands with Output Parameters
+        - Stored Procs can contains Logic and Queries (Select, DML) and can work on one or more tables at a time            
+        - SInce they are in Pre-COmpiled form, the execution is fatser
+
+        
+# Assignmants# Date: 06-09-2021
+
+Plan on paper and then Create Tables for Logistic
+    - Vendor, Truck, Driver, Customer, Order (Placed by Customer), Destination (Rates [Either Per tone or based on Km]), Delivery (Place or Person where the order is delivered), DIspatch
+        - DIspatch
+            - The tbale that cointains all dispatch information
+            - This table will be used for Following Reports
+                - Customer wise Dispatch
+                - Truck wise Dispatch
+                - Vendor wise Dispatch
+                - Destionation wise Dispatch
+                - Driver wise Dispatch
+                - DIspatch Report like OnTime, Delay, Cancel
+                - Fuel COnsumerd
+                - Expendeture Mased on Dispatch
+                    - Driver Salary, Amount Paid to Vendor, Fuel, Maintenence, Delay, Loading and Unloading CHarges, etc
+                - Profile-LOss Statement Per Truck
+                - Profile-LOss Statement Per Driver
+                - Profile-LOss Statement Per Order
+                - Profile-LOss Statement Per Desitnation
+            - One DIspatch May carry multiple Orders from Same or DIfferent Customers          
+
+- CReate a DIspatch for the Customer Mahesh to Deliver the Sofaset and Dining Table from Mumbai to Pune on date 01-09-2021
+    - Pick up on 01-09-2021 and Delivery Note later than 02-09-2021 
+
+       
+        - Order (Order Table)
+        - PickUp Location (Desitnation)
+        - Deliver Location (Desitnation)
+        - Pickup Material 
+        - Pickup date
+        - Expected Delivery Date
+        - Set the Rates. (Destiation with Rates)
+        - Assign a vehicle Vehicle (Vehicle Master)
+        - Assign a Driver (Driver Master)
+        - Monitor Expenditure
+            - Fuel COst, Driver COst, Toll, Naka, Loading Charges, Unloading CHarges
+
+- Dispatch (UI)
+    - DispatchUniqueId (Auo_Increment) Primary Key
+    - DispatchDate
+    - OrderId
+         - CustomerId (Can be omitted if the Customer is parent of the Order Table)
+         - Provide Details of Pickup Location, Delivery Location, Maytrial, PickupDate, ExpectedDeliveryDate 
+            - The Moment the Destination (PickUp and Delivery) is displayed the system should immediately provide the Toll Tax Value
+
+# Date:07-09-2021
+1. Print the Third Max Salary of the Employee
+2. Display EmpName, DEsignation, DeptNo of the Employees Having Max, second max and third max salary per department 
+3. Create a View that will store result of Task 2 and make sure that5 it will be updated when new records are added in Empployee and Department Tables
+
+
+
+
+
+
